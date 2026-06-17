@@ -5,7 +5,8 @@ enum State {
 	RUNNING,
 	JUMP,
 	FALL,
-	LANDING
+	LANDING,
+	WALL_SLIDING
 }
 
 var GroundState = [State.RUNNING,State.IDLE,State.LANDING]
@@ -37,6 +38,8 @@ func tick_physics(state : State, delta: float) -> void: # 根据状态执行动�
 			move(DefaultGravity,delta)
 		State.LANDING:
 			stand(delta)
+		State.WALL_SLIDING:
+			move(DefaultGravity / 3,delta)
 			
 	IsFirstTick = false
 			
@@ -47,7 +50,7 @@ func move(gravity: float, delta: float) -> void:
 	velocity.y += gravity * delta # 每一帧叠加重力，抵消向上的速度
 	
 	if not is_zero_approx(direction):
-		$Sprite2D.flip_h = direction < 0
+		$Graphics.scale.x = -1 if direction < 0 else 1
 		
 	move_and_slide()
 
@@ -87,10 +90,19 @@ func get_next_state(state : State) -> State:
 					state = State.LANDING
 				else:
 					state = State.RUNNING
+			if is_on_wall() and $Graphics/HandChecker.is_colliding() and $Graphics/FootChecker.is_colliding():
+				state = State.WALL_SLIDING
 		State.LANDING:
+			if not still:
+				state = State.RUNNING
 			if not $AnimationPlayer.is_playing():
 				state = State.IDLE
-	
+		State.WALL_SLIDING:
+			if is_on_floor():
+				state = State.IDLE
+			if not is_on_wall():
+				state = State.FALL
+				$Graphics.scale.x = get_wall_normal().x
 	return state
 	
 func transition_state(from : State, to : State) -> void: # 每次状态转移时调用，每一帧都会检查状态切换，根据状态播放动画
@@ -113,4 +125,6 @@ func transition_state(from : State, to : State) -> void: # 每次状态转移时
 				$CoyoteTimer.start()
 		State.LANDING:
 			$AnimationPlayer.play("landing")
+		State.WALL_SLIDING:
+			$AnimationPlayer.play("wall_sliding")
 	IsFirstTick = true
