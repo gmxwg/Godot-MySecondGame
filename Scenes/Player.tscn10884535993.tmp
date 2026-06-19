@@ -576,11 +576,7 @@ deterministic = true
 libraries/ = SubResource("AnimationLibrary_52ee3")
 
 [node name="CoyoteTimer" type="Timer" parent="." unique_id=16856932]
-wait_time = 0.1
-one_shot = true
-
-[node name="WallJumpTimer" type="Timer" parent="." unique_id=2084253419]
-wait_time = 0.2
+wait_time = 0.5
 one_shot = true
 
 [node name="JumpRequestTimer" type="Timer" parent="." unique_id=280639812]
