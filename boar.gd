@@ -39,7 +39,7 @@ func get_next_state(state: State) -> State:
 	return state
 
 func transition_state(from : State, to : State) -> void:
-	print(from,"->",to)
+	# print(from,"->",to)
 	match to:
 		State.IDLE:
 			$AnimationPlayer.play("idle")
