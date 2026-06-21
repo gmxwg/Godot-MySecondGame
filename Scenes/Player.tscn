@@ -547,6 +547,7 @@ _data = {
 }
 
 [node name="Player" type="CharacterBody2D" unique_id=223951169]
+collision_layer = 2
 script = ExtResource("1_kyqiw")
 
 [node name="Graphics" type="Node2D" parent="." unique_id=1998593236]
